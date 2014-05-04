@@ -1,0 +1,62 @@
+<!-- NaN is a language strictly based on the idea of a turing machine, substituting an 
+infinite piano keyboard instead of a ticker tape. 
+  -->
+
+1. The tape is the keyboard, maybe not blank to begin with. There are not yet "notes" written to it.  Yet, given any starting note, the 
+2. Do I want the head to move, or the tape? the head. 
+3. state register: What are the states of my machine? 
+
+do I make decisions about the state based on a tonality? for example: 
+
+Is the source code the state table diagram? 
+
+4. a finite symbol table: Decide on a 5-tuple, or 4-tuple model (qiaj→qi1aj1dk) or 
+
+
+TODO List: Make symbol table with states 
+
+
+
+<!-- Theory
+What is code?
+Turing Machine
+Pre Existing Languages
+Infix/postfix
+Functional languages
+Rewrite 
+
+Compilers
+Other Host Languages
+Get the PEG libraries for the host language
+
+Other Grammars -- BNF, Early, Bison/Yacc
+
+Semantics-- Actor Model, kind of like OOP, Erlang
+
+Non-Determinism-- interesting branching 
+
+Syntaxes-- 
+
+IO is actually a concatenative language
+
+1. Languages are not magic
+2. Code amplifies thought
+3. Build Languages to change how we think
+4. Believe in your dreams  -->
+
+
+<h3>TESTS</h3>
+
+<p>This should result in <em>Ab</em></p>
+<code>(flat A)</code>
+
+<p>This should result in <em>D#</em></p>
+<code>(sharp D)</code>
+
+<code>(chord A C# E)</code>
+
+<code>(melody B Bb C Db)</code>
+
+<code>(+ 7 13)</code>
+<code>(+ 7 13 )</code>
+<code>(+ 7 15 )</code>

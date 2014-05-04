@@ -1,0 +1,126 @@
+<meta charset="utf-8">
+
+<script src="js/jquery.js"></script>
+<script src="js/jqconsole.js"></script>
+<script src="js/sugar.js"></script>
+<script src="js/peg.js"></script>
+<script src="js/plt.js"></script>
+<script src='js/underscore-min.js'></script>
+<script type="text/javascript">
+  // uncomment next line to enable refresh
+  // PLT.refresh = true
+
+  // write helper functions and semantics here
+  var tuRING = {
+    rules: {
+
+        // a: {
+        //   C : {
+        //       operator: '+',
+        //       number: 3,
+        //       move: 'L',
+        //       newState: 'b'
+        //   }
+        // }
+    },
+    
+    dictionary: {
+
+    },  
+
+    compile: {
+
+    eval: function(source) {
+      // the stack we are operating on
+      // console.log(source);
+      source = tuRING.compile.trim(source); 
+      console.log(source);
+
+      tuRING.compile.createRules(source); 
+      return 1; 
+      // console.log(source.length);
+    },
+    
+    trim: function(source){
+      for (var i = 0; i < source.length; i++) {
+        for(var j = 0; j < source[i].length; j++){
+          if (source[i][j] instanceof Array || source[i][j] == 'undefined' ){
+            source[i].removeAt(j);
+          }
+        }
+      }
+      return source; 
+    },
+
+    createRules: function(source){
+      var newRule ={};
+      var array = [];
+      for (var i = 0; i < source.length; i++) {
+        for(var j = 0; j < source[i].length; j++){
+            if (typeof source[i][j] == 'object' || typeof source[i][j] == 'number'){
+              array.push(source[i][j]);
+              }
+          }
+        newRule.state = array[0].state;   
+        newRule.note  = array[1].note;  
+        newRule.operator = array[2].operator; 
+        newRule.number   = array[3]; 
+        newRule.move     = array[4].move;
+        newRule.newState = array[5].newstate; 
+
+        // console.log(newRule);
+        tuRING.rules[newRule.state] = newRule;
+        array = [];
+        }
+        console.log(tuRING.rules);
+    },
+    
+    run: {
+  }
+    }
+};
+
+</script>
+
+<title>tuRING</title>
+
+
+<grammar>
+  start       = e:expr* {return tuRING.compile.eval(e)}  
+  expr        = _?'(' state '[' note ']' _ operator _ number? _ '[' move ']' newstate ')'_? 
+  
+  state       = w:[a-zA-Z0-9+-]+ { return { state:w.join('') } } 
+  note        = w:[a-zA-Z0-9+-]+ { return { note:w.join('') } } 
+  operator    = w:[a-zA-Z0-9+-]+ { return { operator:w.join('') } }  
+  move        = w:[a-zA-Z0-9+-]+ { return { move:w.join('') } } 
+  newstate    = w:[a-zA-Z0-9+-]+ { return { newstate:w.join('') } } 
+
+  word        = w:[a-zA-Z0-9+-]+ { return { word:w.join('') } } 
+  number      = integer
+  integer     = s:'-'? d:digit+  { return parseInt(s + d.join('')) }
+
+  digit       = [0123456789]
+
+  _           = [ \t\r\n]*
+  __          = ' '+ / !.
+</grammar>
+
+
+<h3>Example Code</h3>
+<!-- <code>(a)</code>
+<code>(a[C])</code>
+<code>(a(C))</code> -->
+
+<code>(a[C] + 3 [L]b)</code>
+<code>(a[C] + 3 [L]b)</code>
+<code>(a[C] rand 3 [L]b)</code>
+<code>(thirds[C] + 4 [L]fourths)
+(fourths[C] + 4 [L]fifths)</code>
+<code>(thirds[C] + 4 [L]fourths)(fourths[C] - 4 [L]fifths)</code>
+<code>(fourths[C] - 4 [L]fifths)</code>
+
+
+
+
+
+
