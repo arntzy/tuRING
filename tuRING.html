@@ -11,33 +11,157 @@
   // PLT.refresh = true
 
   // write helper functions and semantics here
-  var tuRING = {
-    rules: {
+  var tapeHead = { 
+      masterIndex: 60,
 
-        // a: {
-        //   C : {
-        //       operator: '+',
-        //       number: 3,
-        //       move: 'L',
-        //       newState: 'b'
-        //   }
-        // }
-    },
+      currentRule : {},
+
+      defaultRule : {
+        operator : '+',
+        number : 0,
+        state: 'default'
+      },
+
+      tape : {
+      
+        init : function(){
+          for (var i = 21; i < 109; i++) {
+            tapeHead.tape[i] = i; 
+          }
+        }
+      },
+      
+      state : 'default',
+      direction : 'default',
+      
+      step: function(){
+        tapeHead.read();
+        tapeHead.write();
+        tapeHead.move(); 
+      },
+
+      read : function(){
+        console.log("READING");
+        tapeHead.currentRule = tapeHead.defaultRule;
+
+        console.log("The tapehead master index is " + tapeHead.masterIndex + '.');
+        console.log("The note number at this master index is " + tapeHead.tape[tapeHead.masterIndex] + '.');
+        
+        var note = tapeHead.getNoteName(tapeHead.tape[tapeHead.masterIndex]); 
+        console.log("The note name at this master index is: " + note);
+
+        console.log("The current state of the tapehead is " + "'" + tapeHead.state + "'.");
+
+        for (var i in tuRING.rules){
+          if ((tapeHead.state == tuRING.rules[i].state)&&(note == tuRING.rules[i].note || note[0] == tuRING.rules[i].note || note[1] == tuRING.rules[i].note))
+          {
+            //set rule to use
+            console.log("User-defined rule exists.");
+            tapeHead.currentRule = tuRING.rules[i];
+          }
+        }
+
+        console.log("The current rule is: ");
+        console.log(tapeHead.currentRule);
+      },
+
+      write : function(){
+        //use tapeHead.currentRule to modify the tape[masterIndex]
+        console.log("WRITING");
+
+        var noteNumber = tapeHead.tape[tapeHead.masterIndex]; 
+        var op = tapeHead.currentRule.operator;
+        var changeValue = tapeHead.currentRule.number;
+        tapeHead.tape[tapeHead.masterIndex] = tuRING.dictionary[op](noteNumber, changeValue); 
+        
+        console.log("The new note number at this index is: " + tapeHead.tape[tapeHead.masterIndex]);
+        var note = tapeHead.getNoteName(tapeHead.tape[tapeHead.masterIndex]); 
+        console.log("The new note name at this master index is: " + note);
+        },
+
+      move : function(){
+        
+        if(tapeHead.currentRule.move){
+        var move = tapeHead.currentRule.move;
+        tapeHead.direction = move;
+        }
+
+        tapeHead.masterIndex = tuRING.dictionary[tapeHead.direction](tapeHead.masterIndex);
+
+        if(tapeHead.currentRule.newstate){
+        var newstate = tapeHead.currentRule.newstate;
+        tapeHead.state = newstate; 
+        }
+        
+        console.log("MOVING " + tapeHead.direction + " into STATE: " + "'"+tapeHead.state+"'");
+        console.log("-------------------------");
+      },
+
+      getNoteName: function(noteNumber){
+          var modulus = noteNumber % 12; 
+          switch (modulus)
+          {
+            case 0:
+            return "C";
+            case 1:
+            return ['C#', 'Db'];
+            case 2:
+            return "D";
+            case 3:
+            return ["D#", "Eb"];
+            case 4:
+            return "E";
+            case 5:
+            return "F";
+            case 6:
+            return ['F#','Gb'];
+            case 7:
+            return "G";
+            case 8:
+            return ['G#', 'Ab'];
+            case 9:
+            return "A";
+            case 10:
+            return ["A#", 'Bb'];
+            case 11:
+            return "B";
+          }
+        }
+        
+
+
+        };
+  
+  var tuRING = {
+
+    rules: {},
     
     dictionary: {
+
+      '+' : function(noteNumber, changeValue){
+        return noteNumber + changeValue; 
+      },
+
+      '-' : function(){},
+
+      'L' : function(masterIndex){
+        return masterIndex - 1;
+      },
+
+      'R' : function(masterIndex){
+        return masterIndex + 1;
+      }
 
     },  
 
     compile: {
 
     eval: function(source) {
-      // the stack we are operating on
-      // console.log(source);
       source = tuRING.compile.trim(source); 
-      console.log(source);
-
       tuRING.compile.createRules(source); 
-      return 1; 
+      
+      tapeHead.tape.init();
+      return "compiled"; 
       // console.log(source.length);
     },
     
@@ -52,31 +176,34 @@
       return source; 
     },
 
-    createRules: function(source){
-      var newRule ={};
-      var array = [];
-      for (var i = 0; i < source.length; i++) {
-        for(var j = 0; j < source[i].length; j++){
-            if (typeof source[i][j] == 'object' || typeof source[i][j] == 'number'){
-              array.push(source[i][j]);
-              }
-          }
-        newRule.state = array[0].state;   
-        newRule.note  = array[1].note;  
-        newRule.operator = array[2].operator; 
-        newRule.number   = array[3]; 
-        newRule.move     = array[4].move;
-        newRule.newState = array[5].newstate; 
-
-        // console.log(newRule);
-        tuRING.rules[newRule.state] = newRule;
-        array = [];
-        }
+    parseRules: function(source){
+      //add if statement to parse a default rule
+      for (var i in source){
+        tuRING.rules[i].state = source[i][1].word; 
+        tuRING.rules[i].note = source[i][3].word;
+        tuRING.rules[i].operator = source[i][5].word;
+        tuRING.rules[i].number = source[i][6];
+        tuRING.rules[i].move  =  source[i][8].word;
+        tuRING.rules[i].newstate  =  source[i][10].word;
+      }
         console.log(tuRING.rules);
     },
     
+      createRules: function(source){
+        for (var i = 0; i < source.length; i++) {
+         tuRING.rules[i] = source[i];         
+        }
+        tuRING.compile.parseRules(tuRING.rules);
+      },
+    },
+
     run: {
-  }
+      steps: function(numSteps){
+        tapeHead.masterIndex = 60;
+        for (var i = 0; i < numSteps; i++) {
+            tapeHead.step();
+        }
+      }
     }
 };
 
@@ -89,13 +216,13 @@
   start       = e:expr* {return tuRING.compile.eval(e)}  
   expr        = _?'(' state '[' note ']' _ operator _ number? _ '[' move ']' newstate ')'_? 
   
-  state       = w:[a-zA-Z0-9+-]+ { return { state:w.join('') } } 
-  note        = w:[a-zA-Z0-9+-]+ { return { note:w.join('') } } 
-  operator    = w:[a-zA-Z0-9+-]+ { return { operator:w.join('') } }  
-  move        = w:[a-zA-Z0-9+-]+ { return { move:w.join('') } } 
-  newstate    = w:[a-zA-Z0-9+-]+ { return { newstate:w.join('') } } 
+  state       = word
+  note        = word
+  operator    = word
+  move        = word
+  newstate    = word
 
-  word        = w:[a-zA-Z0-9+-]+ { return { word:w.join('') } } 
+  word        = w:[a-zA-Z0-9#+-]+ { return { word:w.join('') } } 
   number      = integer
   integer     = s:'-'? d:digit+  { return parseInt(s + d.join('')) }
 
@@ -107,19 +234,31 @@
 
 
 <h3>Example Code</h3>
+<h3>tapehead starts on note 60: middle C</h3>
 <!-- <code>(a)</code>
 <code>(a[C])</code>
 <code>(a(C))</code> -->
 
+<!-- <code>(a[C] + 3 [L]b)</code>
 <code>(a[C] + 3 [L]b)</code>
-<code>(a[C] + 3 [L]b)</code>
-<code>(a[C] rand 3 [L]b)</code>
-<code>(thirds[C] + 4 [L]fourths)
-(fourths[C] + 4 [L]fifths)</code>
-<code>(thirds[C] + 4 [L]fourths)(fourths[C] - 4 [L]fifths)</code>
-<code>(fourths[C] - 4 [L]fifths)</code>
+<code>(a[C] rand 3 [L]b)</code> -->
+<code>(default[C] + 0 [R]default)
+(default[G] + 0 [L]makeD)
+(makeD[F] + 1 [L]makeD)
+(makeD[C] + 1 [R]default)</code>
+<!-- <code>(thirds[C] + 4 [L]fourths)(fourths[C] - 4 [L]fifths)</code>
+<code>(fourths[C] - 4 [L]fifths)</code> -->
 
-
+<!-- 60: 61
+61: 61
+62: 62
+63: 63
+64: 64
+65: 66
+66: 66
+67: 67
+68: 68
+69: 69 -->
 
 
 
