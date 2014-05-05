@@ -10,7 +10,6 @@
   // uncomment next line to enable refresh
   // PLT.refresh = true
 
-  // write helper functions and semantics here
   var tapeHead = { 
       masterIndex: 60,
 
@@ -55,7 +54,6 @@
         for (var i in tuRING.rules){
           if ((tapeHead.state == tuRING.rules[i].state)&&(note == tuRING.rules[i].note || note[0] == tuRING.rules[i].note || note[1] == tuRING.rules[i].note))
           {
-            //set rule to use
             console.log("User-defined rule exists.");
             tapeHead.currentRule = tuRING.rules[i];
           }
@@ -66,7 +64,6 @@
       },
 
       write : function(){
-        //use tapeHead.currentRule to modify the tape[masterIndex]
         console.log("WRITING");
 
         var noteNumber = tapeHead.tape[tapeHead.masterIndex]; 
@@ -161,8 +158,7 @@
       tuRING.compile.createRules(source); 
       
       tapeHead.tape.init();
-      return "compiled"; 
-      // console.log(source.length);
+      return "compiled."; 
     },
     
     trim: function(source){
@@ -235,31 +231,11 @@
 
 <h3>Example Code</h3>
 <h3>tapehead starts on note 60: middle C</h3>
-<!-- <code>(a)</code>
-<code>(a[C])</code>
-<code>(a(C))</code> -->
 
-<!-- <code>(a[C] + 3 [L]b)</code>
-<code>(a[C] + 3 [L]b)</code>
-<code>(a[C] rand 3 [L]b)</code> -->
 <code>(default[C] + 0 [R]default)
 (default[G] + 0 [L]makeD)
 (makeD[F] + 1 [L]makeD)
 (makeD[C] + 1 [R]default)</code>
-<!-- <code>(thirds[C] + 4 [L]fourths)(fourths[C] - 4 [L]fifths)</code>
-<code>(fourths[C] - 4 [L]fifths)</code> -->
-
-<!-- 60: 61
-61: 61
-62: 62
-63: 63
-64: 64
-65: 66
-66: 66
-67: 67
-68: 68
-69: 69 -->
-
 
 
 
