@@ -83,6 +83,14 @@
         tapeHead.direction = move;
       }
 
+      if(tapeHead.masterIndex == 21){
+        tapeHead.direction = 'R';
+      }
+
+      if(tapeHead.masterIndex == 108){
+        tapeHead.direction = 'L';
+      }
+
       tapeHead.masterIndex = tuRING.dictionary[tapeHead.direction](tapeHead.masterIndex);
 
       if(tapeHead.currentRule.newstate){
@@ -228,10 +236,22 @@
 <h3>Example Code</h3>
 <h3>tapehead starts on note 60: middle C</h3>
 
+<h3>Adding 1 + 1</h3>
+
 <code>(default[C] + 0 [R]default)
+(default[C#] + 0 [R]1)
+(1[D]+ 12 [R]2)
+(2[Eb] + 0 [R]2)
+(2[E] + 0 [L]3)
+(3[Eb] + 12 [L]4)
+(4[D] + 0 [L]4)</code>
+
+<!-- <code>(default[C] + 0 [R]default)
 (default[G] + 0 [L]makeD)
 (makeD[F] + 1 [L]makeD)
-(makeD[C] + 1 [R]default)</code>
+(makeD[C] + 1 [R]default)</code> -->
 
+<!-- <code>(default[C] + 0 [L]ascending)</code>
+ -->
 
 
